@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="about-page-wrapper">
+    
+    <!-- Timeline Navigation Bar -->
+    <div class="timeline-navigation">
+        <div class="container-fluid">
+            <div class="timeline-nav-scroll">
+                <a href="?period=all" 
+                   class="timeline-period {% if selected_period == 'all' %}active{% endif %}">
+                    All Periods
+                </a>
+                
+                {% for period in timeline_periods %}
+                    <a href="?period={{ period.start }}-{{ period.end }}" 
+                       class="timeline-period {% if selected_period == period.label %}active{% endif %}">
+                        {{ period.label }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div class="container-fluid mt-4">
+        <div class="row">
+            
+            <!-- Left Sidebar (Optional - can add filters/info later) -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <div class="about-sidebar">
+                    {% if page.introduction %}
+                        <div class="about-intro-box">
+                            <h3 class="sidebar-title">About</h3>
+                            {{ page.introduction|richtext }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Main Content - Historical Events -->
+            <div class="col-lg-9">
+                
+                <!-- Mobile Introduction -->
+                {% if page.introduction %}
+                    <div class="about-intro-mobile d-lg-none mb-4">
+                        <h2 class="page-title">{{ page.page_title }}</h2>
+                        {{ page.introduction|richtext }}
+                    </div>
+                {% endif %}
+                
+                <!-- Events Timeline -->
+                <div class="historical-events-timeline">
+                    {% for event in events %}
+                        <div class="timeline-event-card">
+                            <div class="row g-0">
+                                
+                                <!-- Event Image -->
+                                {% if event.event_image %}
+                                    <div class="col-md-12">
+                                        <div class="event-image-wrapper">
+                                            {% image event.event_image fill-1200x600 as event_img %}
+                                            <img src="{{ event_img.url }}" 
+                                                 alt="{{ event.event_title }}" 
+                                                 class="event-timeline-image">
+                                            
+                                            <!-- Date Badge on Image -->
+                                            <div class="event-date-badge">
+                                                <div class="date-badge-month">
+                                                    {{ event.event_date|date:"M" }}
+                                                </div>
+                                                <div class="date-badge-day">
+                                                    {{ event.event_date|date:"d" }}
+                                                </div>
+                                                <div class="date-badge-year">
+                                                    {{ event.event_date|date:"Y" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                                <!-- Event Content -->
+                                <div class="col-md-12">
+                                    <div class="event-content-wrapper">
+                                        <h2 class="event-timeline-title">
+                                            {{ event.event_title }}
+                                        </h2>
+                                        <div class="event-timeline-description">
+                                            {{ event.event_description|richtext }}
+                                        </div>
+                                        
+                                        <!-- Read More Link (Optional) -->
+                                        <a href="{% pageurl event %}" class="event-read-more">
+                                            Read Full Story <i class="fas fa-arrow-right ms-2"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="alert alert-info text-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No historical events found for this period.
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if events.has_other_pages %}
+                    <div class="pagination-wrapper mt-5">
+                        <nav aria-label="Historical events pagination">
+                            <ul class="pagination justify-content-center">
+                                
+                                {% if events.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ events.previous_page_number }}&period={{ selected_period }}">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                {% for num in events.paginator.page_range %}
+                                    {% if events.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > events.number|add:'-3' and num < events.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ num }}&period={{ selected_period }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if events.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ events.next_page_number }}&period={{ selected_period }}">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+                
+            </div>
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

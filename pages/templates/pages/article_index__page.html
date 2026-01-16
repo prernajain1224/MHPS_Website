@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Page Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header text-center mb-4">
+                <h1 class="page-title">{{ page.page_title }}</h1>
+                {% if page.introduction %}
+                    <div class="page-intro mt-3">
+                        {{ page.introduction|richtext }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="article-filters">
+                <form method="get" class="filter-form">
+                    <label class="filter-label me-3">Filter by type:</label>
+                    <select name="article_type" class="form-select article-filter-select" onchange="this.form.submit()">
+                        <option value="">All Articles</option>
+                        {% for value, label in article_types %}
+                            <option value="{{ value }}" {% if request.GET.article_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Articles Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="articles-grid">
+                <div class="row g-4">
+                    {% for article in articles %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="article-card {% if article.is_featured %}article-card-featured{% endif %}">
+                                <a href="{% pageurl article %}" class="article-card-link">
+                                    
+                                    <!-- Article Badge -->
+                                    <div class="article-badge-wrapper">
+                                        <span class="article-badge">
+                                            {{ article.get_article_type_display|upper }}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Article Title -->
+                                    <h3 class="article-card-title">
+                                        {{ article.article_title }}
+                                    </h3>
+                                    
+                                    <!-- Article Description -->
+                                    <p class="article-card-description">
+                                        {{ article.short_description }}
+                                    </p>
+                                    
+                                    <!-- Article Date -->
+                                    <div class="article-card-datetime">
+                                        <div class="article-date-day">
+                                            {{ article.publish_date.day }}
+                                        </div>
+                                        <div class="article-date-details">
+                                            {{ article.publish_date|date:"F Y"|upper }}
+                                            {% if article.author_name %}
+                                                <br>By {{ article.author_name }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No articles available at the moment.
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            {% if articles.has_other_pages %}
+                <div class="pagination-wrapper mt-5">
+                    <nav aria-label="Articles pagination">
+                        <ul class="pagination justify-content-center">
+                            
+                            {% if articles.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ articles.previous_page_number }}{% if request.GET.article_type %}&article_type={{ request.GET.article_type }}{% endif %}">
+                                        <i class="fas fa-chevron-left"></i> Previous
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in articles.paginator.page_range %}
+                                {% if articles.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > articles.number|add:'-3' and num < articles.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if request.GET.article_type %}&article_type={{ request.GET.article_type }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if articles.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ articles.next_page_number }}{% if request.GET.article_type %}&article_type={{ request.GET.article_type }}{% endif %}">
+                                        Next <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block title %}{{ page.page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Page Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="event-page-header text-center mb-4">
+                <h1 class="event-page-title">{{ page.page_title }}</h1>
+                {% if page.introduction %}
+                    <div class="event-page-intro mt-3">
+                        {{ page.introduction|richtext }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="event-filters-wrapper">
+                <form method="get" class="event-filters-form" id="eventFiltersForm">
+                    <input type="hidden" name="tab" value="{{ active_tab }}">
+                    
+                    <div class="filter-label">
+                        <strong>Filter by:</strong>
+                    </div>
+                    
+                    <select name="event_type" class="form-select event-filter-select">
+                        <option value="">Event format</option>
+                        {% for value, label in event_types %}
+                            <option value="{{ value }}" {% if request.GET.event_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <select name="event_format" class="form-select event-filter-select">
+                        <option value="">Event type</option>
+                        {% for value, label in event_formats %}
+                            <option value="{{ value }}" {% if request.GET.event_format == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <div class="livestream-toggle">
+                        <label class="form-check-label me-2">Livestream</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="livestream" 
+                                   value="true" id="livestreamToggle" 
+                                   {% if request.GET.livestream == 'true' %}checked{% endif %}
+                                   onchange="this.form.submit()">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-sm ms-3">Apply Filters</button>
+                    <a href="?tab={{ active_tab }}" class="btn btn-outline-secondary btn-sm">Clear</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="event-tabs">
+                <a href="?tab=upcoming" class="event-tab {% if active_tab == 'upcoming' %}active{% endif %}">
+                    Upcoming
+                </a>
+                <a href="?tab=past" class="event-tab {% if active_tab == 'past' %}active{% endif %}">
+                    Past
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Events Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="events-grid">
+                <div class="row g-4">
+                    {% for event in events %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="event-card">
+                                <a href="{% pageurl event %}" class="event-card-link">
+                                    
+                                    <!-- Event Badge -->
+                                    <div class="event-badge-wrapper">
+                                        <span class="event-badge">
+                                            {{ event.get_event_type_display|upper }} — {{ event.get_event_format_display|upper }}
+                                            {% if event.has_livestream %}
+                                                <i class="fas fa-broadcast-tower ms-1"></i>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    
+                                    <!-- Event Title -->
+                                    <h3 class="event-card-title">
+                                        {{ event.event_title }}
+                                    </h3>
+                                    
+                                    <!-- Event Description -->
+                                    <p class="event-card-description">
+                                        {{ event.short_description }}
+                                    </p>
+                                    
+                                    <!-- Event Date & Time -->
+                                    <div class="event-card-datetime">
+                                        <div class="event-date-day">
+                                            {{ event.event_start_date.day }}
+                                        </div>
+                                        <div class="event-date-details">
+                                            {{ event.event_start_date|date:"F Y"|upper }} — 
+                                            {{ event.event_start_time|time:"g:iA" }} TO 
+                                            {{ event.event_end_time|time:"g:iA" }}
+                                        </div>
+                                    </div>
+                                    
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {% if active_tab == 'upcoming' %}
+                                    No upcoming events at the moment.
+                                {% else %}
+                                    No past events found.
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            {% if events.has_other_pages %}
+                <div class="pagination-wrapper mt-5">
+                    <nav aria-label="Events pagination">
+                        <ul class="pagination justify-content-center">
+                            
+                            {% if events.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ events.previous_page_number }}&tab={{ active_tab }}{% if request.GET.event_type %}&event_type={{ request.GET.event_type }}{% endif %}{% if request.GET.event_format %}&event_format={{ request.GET.event_format }}{% endif %}">
+                                        <i class="fas fa-chevron-left"></i> Previous
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in events.paginator.page_range %}
+                                {% if events.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > events.number|add:'-3' and num < events.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&tab={{ active_tab }}{% if request.GET.event_type %}&event_type={{ request.GET.event_type }}{% endif %}{% if request.GET.event_format %}&event_format={{ request.GET.event_format }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if events.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ events.next_page_number }}&tab={{ active_tab }}{% if request.GET.event_type %}&event_type={{ request.GET.event_type }}{% endif %}{% if request.GET.event_format %}&event_format={{ request.GET.event_format }}{% endif %}">
+                                        Next <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-submit form on select change
+    document.querySelectorAll('.event-filter-select').forEach(function(select) {
+        select.addEventListener('change', function() {
+            document.getElementById('eventFiltersForm').submit();
+        });
+    });
+</script>
+{% endblock %}

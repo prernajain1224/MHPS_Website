@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block title %}{{ page.page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="page-header text-center mb-5">
+                <h1 class="page-title">{{ page.page_title }}</h1>
+                {% if page.page_subtitle %}
+                    <p class="page-subtitle text-muted">{{ page.page_subtitle }}</p>
+                {% endif %}
+            </div>
+            
+            {% if page.introduction %}
+                <div class="introduction-text mb-5">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                {{ page.introduction|richtext }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Contact Information Section -->
+    <div class="contact-section py-5">
+        <div class="container">
+            <div class="row g-4">
+                
+                <!-- Address Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="contact-card card-custom h-100 p-4">
+                        <div class="contact-icon mb-3">
+                            <i class="fas fa-map-marker-alt fa-2x text-primary-green"></i>
+                        </div>
+                        <h3 class="contact-card-title h5 mb-3">Office Address</h3>
+                        <div class="contact-card-content">
+                            {% if page.office_address %}
+                                {{ page.office_address|richtext }}
+                            {% else %}
+                                <p class="text-muted">Address will be updated soon.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Phone & Email Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="contact-card card-custom h-100 p-4">
+                        <div class="contact-icon mb-3">
+                            <i class="fas fa-phone-alt fa-2x text-primary-green"></i>
+                        </div>
+                        <h3 class="contact-card-title h5 mb-3">Call Us</h3>
+                        <div class="contact-card-content">
+                            {% if page.phone_primary %}
+                                <p class="mb-2">
+                                    <strong>Primary:</strong> 
+                                    <a href="tel:{{ page.phone_primary }}" class="contact-link">
+                                        {{ page.phone_primary }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            
+                            {% if page.phone_secondary %}
+                                <p class="mb-3">
+                                    <strong>Secondary:</strong> 
+                                    <a href="tel:{{ page.phone_secondary }}" class="contact-link">
+                                        {{ page.phone_secondary }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            
+                            {% if page.email_primary %}
+                                <p class="mb-2">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <a href="mailto:{{ page.email_primary }}" class="contact-link">
+                                        {{ page.email_primary }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                            
+                            {% if page.email_secondary %}
+                                <p class="mb-0">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <a href="mailto:{{ page.email_secondary }}" class="contact-link">
+                                        {{ page.email_secondary }}
+                                    </a>
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Office Hours Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="contact-card card-custom h-100 p-4">
+                        <div class="contact-icon mb-3">
+                            <i class="fas fa-clock fa-2x text-primary-green"></i>
+                        </div>
+                        <h3 class="contact-card-title h5 mb-3">Office Hours</h3>
+                        <div class="contact-card-content">
+                            {% if page.office_hours %}
+                                {{ page.office_hours|richtext }}
+                            {% else %}
+                                <p class="text-muted">Hours will be updated soon.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <!-- Google Maps Section -->
+    {% if page.map_embed_code %}
+        <div class="map-section py-5 bg-light-gray">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="text-center mb-4">Find Us Here</h2>
+                        <div class="map-container">
+                            {{ page.map_embed_code|safe }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Social Media Section -->
+    {% if page.facebook_url or page.twitter_url or page.instagram_url or page.youtube_url %}
+        <div class="social-section py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h2 class="mb-4">Connect With Us</h2>
+                        <div class="social-links">
+                            {% if page.facebook_url %}
+                                <a href="{{ page.facebook_url }}" target="_blank" class="social-icon facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                            {% endif %}
+                            
+                            {% if page.twitter_url %}
+                                <a href="{{ page.twitter_url }}" target="_blank" class="social-icon twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            {% endif %}
+                            
+                            {% if page.instagram_url %}
+                                <a href="{{ page.instagram_url }}" target="_blank" class="social-icon instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                            {% endif %}
+                            
+                            {% if page.youtube_url %}
+                                <a href="{{ page.youtube_url }}" target="_blank" class="social-icon youtube">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Additional Content -->
+    {% if page.additional_content %}
+        <div class="additional-content py-5 bg-light-gray">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        {{ page.additional_content|richtext }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+</div>
+{% endblock %}

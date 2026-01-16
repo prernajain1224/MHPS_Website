@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+
+
+{% block title %}{{ page.page_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    
+    <!-- Page Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header text-center mb-4">
+                <h1 class="page-title">{{ page.page_title }}</h1>
+                {% if page.introduction %}
+                    <div class="page-intro mt-3">
+                        {{ page.introduction|richtext }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="press-tabs">
+                <ul class="nav nav-tabs press-nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link press-tab-link {% if active_tab == 'press-releases' %}active{% endif %}" 
+                           href="?tab=press-releases">
+                            Press Releases
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link press-tab-link {% if active_tab == 'news' %}active{% endif %}" 
+                           href="?tab=news">
+                            News
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link press-tab-link {% if active_tab == 'interviews' %}active{% endif %}" 
+                           href="?tab=interviews">
+                            Interviews
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link press-tab-link {% if active_tab == 'editorials' %}active{% endif %}" 
+                           href="?tab=editorials">
+                            Editorials
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Press Releases Grid -->
+    <div class="row">
+        <div class="col-12">
+            <div class="press-grid">
+                <div class="row g-4">
+                    {% for release in press_releases %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="press-card {% if release.is_featured %}press-card-featured{% endif %}">
+                                <a href="{% pageurl release %}" class="press-card-link">
+                                    <div class="press-card-date">
+                                        {{ release.press_date|date:"d M Y"|upper }}
+                                    </div>
+                                    
+                                    {% if release.author_names %}
+                                        <div class="press-card-author">
+                                            {{ release.author_names|upper }}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <h3 class="press-card-title">
+                                        {{ release.short_title }}
+                                    </h3>
+                                </a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                No press releases available at the moment.
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            {% if press_releases.has_other_pages %}
+                <div class="pagination-wrapper mt-5">
+                    <nav aria-label="Press releases pagination">
+                        <ul class="pagination justify-content-center">
+                            
+                            {% if press_releases.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ press_releases.previous_page_number }}&tab={{ active_tab }}">
+                                        <i class="fas fa-chevron-left"></i> Previous
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            {% for num in press_releases.paginator.page_range %}
+                                {% if press_releases.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > press_releases.number|add:'-3' and num < press_releases.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&tab={{ active_tab }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if press_releases.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ press_releases.next_page_number }}&tab={{ active_tab }}">
+                                        Next <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                        </ul>
+                    </nav>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

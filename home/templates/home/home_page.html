@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Page Title -->
+    <h1 class="text-center">
+        {{ page.title }}
+    </h1>
+
+    <!-- Page Body -->
+    {% if page.body %}
+        <div class="mt-4">
+            {{ page.body|richtext }}
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

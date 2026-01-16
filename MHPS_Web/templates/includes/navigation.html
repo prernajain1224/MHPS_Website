@@ -1,0 +1,40 @@
+{% load wagtailcore_tags %}
+
+<nav class="main-navigation">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- Mobile Toggle Button -->
+                <button class="navbar-toggler d-md-none" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#navbarMenu" aria-controls="navbarMenu" 
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarMenu">
+                    <ul class="nav-menu mb-0">
+                        <li class="nav-item">
+                            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/biography/" class="nav-link">Biography</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/gallery/" class="nav-link">Gallery</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/member-search/" class="nav-link">Member-Search</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/office-bearers/" class="nav-link">Office-Bearers</a>
+                        </li>
+                        <li class="nav-item ms-md-auto">
+                            <a href="/admin/" class="nav-link admin-link">Admin-Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

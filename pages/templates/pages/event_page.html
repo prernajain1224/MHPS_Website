@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags %}
+
+{% block title %}{{ page.event_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mt-3 mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ page.get_parent.url }}">Events</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ page.event_title|truncatewords:5 }}
+                    </li>
+                </ol>
+            </nav>
+            
+            <!-- Event Detail Content -->
+            <article class="event-detail-article">
+                
+                <!-- Event Badge -->
+                <div class="event-detail-badge mb-3">
+                    <span class="event-badge">
+                        {{ page.get_event_type_display|upper }} — {{ page.get_event_format_display|upper }}
+                        {% if page.has_livestream %}
+                            <i class="fas fa-broadcast-tower ms-1"></i>
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <!-- Event Title -->
+                <h1 class="event-detail-title mb-4">{{ page.event_title }}</h1>
+                
+                <!-- Event Meta Info -->
+                <div class="event-detail-meta mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="meta-item">
+                                <i class="far fa-calendar-alt text-primary-green me-2"></i>
+                                <strong>Date:</strong> {{ page.event_start_date|date:"d F Y" }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="meta-item">
+                                <i class="far fa-clock text-primary-green me-2"></i>
+                                <strong>Time:</strong> 
+                                {{ page.event_start_time|time:"g:i A" }} - {{ page.event_end_time|time:"g:i A" }}
+                            </div>
+                        </div>
+                        {% if page.event_location %}
+                            <div class="col-md-6">
+                                <div class="meta-item">
+                                    <i class="fas fa-map-marker-alt text-primary-green me-2"></i>
+                                    <strong>Location:</strong> {{ page.event_location }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="col-md-6">
+                            <div class="meta-item">
+                                <i class="fas fa-video text-primary-green me-2"></i>
+                                <strong>Format:</strong> {{ page.get_event_format_display }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Event Description -->
+                <div class="event-detail-content">
+                    {{ page.full_description|richtext }}
+                </div>
+                
+                <!-- Registration Button -->
+                {% if page.registration_link and page.is_upcoming %}
+                    <div class="event-registration mt-5 text-center">
+                        <a href="{{ page.registration_link }}" target="_blank" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Register for this Event
+                        </a>
+                    </div>
+                {% endif %}
+                
+                <!-- Back Button -->
+                <div class="event-detail-back mt-5">
+                    <a href="{{ page.get_parent.url }}" class="btn btn-outline-success">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Back to Events
+                    </a>
+                </div>
+                
+            </article>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
