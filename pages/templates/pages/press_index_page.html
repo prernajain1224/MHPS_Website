@@ -6,7 +6,7 @@
 {% block title %}{{ page.page_title }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container">
     
     <!-- Page Header -->
     <div class="row">
@@ -25,33 +25,26 @@
     <!-- Navigation Tabs -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="press-tabs">
-                <ul class="nav nav-tabs press-nav-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link press-tab-link {% if active_tab == 'press-releases' %}active{% endif %}" 
-                           href="?tab=press-releases">
-                            Press Releases
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link press-tab-link {% if active_tab == 'news' %}active{% endif %}" 
-                           href="?tab=news">
-                            News
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link press-tab-link {% if active_tab == 'interviews' %}active{% endif %}" 
-                           href="?tab=interviews">
-                            Interviews
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link press-tab-link {% if active_tab == 'editorials' %}active{% endif %}" 
-                           href="?tab=editorials">
-                            Editorials
-                        </a>
-                    </li>
-                </ul>
+            <div class="event-tabs">
+                <a class="nav-link event-tab {% if active_tab == 'press-releases' %}active{% endif %}" 
+                   href="?tab=press-releases">
+                    Press Releases
+                </a>
+                <a class="event-tab {% if active_tab == 'news' %}active{% endif %}" 
+                   href="?tab=news">
+                    News
+                </a>
+                <a class="event-tab {% if active_tab == 'interviews' %}active{% endif %}" 
+                   href="?tab=interviews">
+                    Interviews
+                </a>
+                <a href="?tab=upcoming" class="event-tab {% if active_tab == 'upcoming' %}active{% endif %}">
+                    Upcoming
+                </a>
+                <a class="event-tab {% if active_tab == 'editorials' %}active{% endif %}" 
+                   href="?tab=editorials">
+                    Editorials
+                </a>
             </div>
         </div>
     </div>
