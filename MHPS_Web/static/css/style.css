@@ -2050,3 +2050,407 @@ body {
         font-size: 11px;
     }
 }
+
+
+/* ========================================
+   PRESS GALLERY STYLES
+   ======================================== */
+
+/* Press Gallery Index Page */
+.press-categories-grid {
+    margin-top: 30px;
+}
+
+.press-category-card-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.press-category-card {
+    background: linear-gradient(135deg, var(--primary-white) 0%, #f5f9f7 100%);
+    border-radius: 8px;
+    padding: 40px 30px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    border-left: 5px solid var(--primary-green);
+    text-align: center;
+    height: 100%;
+    min-height: 250px;
+    position: relative;
+}
+
+.press-category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-left-color: #1f5438;
+}
+
+.category-icon {
+    color: var(--primary-green);
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.category-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 15px;
+}
+
+.category-count {
+    font-size: 15px;
+    color: #666;
+    margin: 0;
+}
+
+.category-arrow {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    color: var(--primary-green);
+    font-size: 22px;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.press-category-card:hover .category-arrow {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* ========================================
+   PRESS GALLERY CATEGORY PAGE
+   ======================================== */
+
+.press-gallery-wrapper {
+    background-color: var(--light-gray);
+    padding: 30px 0;
+    min-height: 80vh;
+}
+
+/* Category Header */
+.press-category-header {
+    background-color: var(--primary-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    text-align: center;
+}
+
+.press-category-title {
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 15px;
+}
+
+.press-category-description {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Press Filters */
+.press-filters-wrapper {
+    background-color: var(--primary-white);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+/* Press Albums Grid */
+.press-albums-grid {
+    margin-top: 30px;
+}
+
+/* Press Album Card */
+.press-album-card {
+    background-color: var(--primary-white);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.press-album-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-green);
+}
+
+.press-album-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/* Album Cover */
+.press-album-cover {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    background-color: #f0f0f0;
+}
+
+.press-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.press-album-card:hover .press-cover-image {
+    transform: scale(1.08);
+}
+
+.press-no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ccc;
+}
+
+/* Favorite Icon (Heart) */
+.press-favorite-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-green);
+    font-size: 18px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.press-favorite-icon:hover {
+    background-color: var(--primary-green);
+    color: var(--primary-white);
+    transform: scale(1.1);
+}
+
+/* Album Info */
+.press-album-info {
+    padding: 20px;
+}
+
+.press-album-date {
+    font-size: 12px;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.press-album-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--dark-gray);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.press-album-location {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* ========================================
+   PRESS ALBUM DETAIL PAGE
+   ======================================== */
+
+.press-album-detail-header {
+    background-color: var(--primary-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 30px;
+}
+
+.press-album-date-badge {
+    display: inline-block;
+    background-color: #c8e6d7;
+    color: var(--primary-green);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.press-album-detail-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.press-album-detail-location {
+    font-size: 16px;
+    color: #666;
+    margin: 0;
+}
+
+.press-album-description {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-color);
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Press Photos Grid */
+.press-photos-grid {
+    margin-bottom: 30px;
+}
+
+.press-photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    cursor: pointer;
+    aspect-ratio: 3 / 2;
+    background-color: #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.press-photo-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.press-photo-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.press-photo-item:hover .press-photo-thumb {
+    transform: scale(1.1);
+}
+
+.press-photo-caption-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    padding: 30px 15px 15px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.press-photo-item:hover .press-photo-caption-overlay {
+    opacity: 1;
+}
+
+.press-photo-caption-text {
+    color: var(--primary-white);
+    font-size: 14px;
+    margin: 0;
+}
+
+.press-album-back,
+.back-to-index {
+    text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE STYLES
+   ======================================== */
+
+@media (max-width: 992px) {
+    .press-category-title {
+        font-size: 36px;
+    }
+    
+    .press-category-card {
+        padding: 30px 25px;
+        min-height: 220px;
+    }
+    
+    .category-title {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .press-category-header {
+        padding: 25px;
+    }
+    
+    .press-category-title {
+        font-size: 28px;
+    }
+    
+    .press-filters-wrapper {
+        padding: 20px;
+    }
+    
+    .press-album-card {
+        margin-bottom: 20px;
+    }
+    
+    .press-album-detail-header {
+        padding: 25px;
+    }
+    
+    .press-album-detail-title {
+        font-size: 26px;
+    }
+}
+
+@media (max-width: 480px) {
+    .press-category-card {
+        padding: 25px 20px;
+        min-height: 200px;
+    }
+    
+    .category-icon i {
+        font-size: 2.5rem;
+    }
+    
+    .category-title {
+        font-size: 20px;
+    }
+    
+    .press-favorite-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+}
+
+.press-detail-badge {
+    display: inline-block;
+}
+
+.press-badge-tag {
+    display: inline-block;
+    background-color: #c8e6d7;
+    color: var(--primary-green);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}

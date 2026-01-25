@@ -195,6 +195,7 @@ class PressReleasePage(Page):
 
 
 class NewsPage(Page):
+    template = "pages/news_page.html"
     """News Page - Similar structure to Press Release"""
     
     press_date = models.DateField(help_text="Date of news")
@@ -227,6 +228,7 @@ class NewsPage(Page):
 
 
 class InterviewPage(Page):
+    template = "pages/interview_page.html"
     """Interview Page"""
     
     press_date = models.DateField(help_text="Date of interview")
@@ -253,6 +255,7 @@ class InterviewPage(Page):
 
 
 class EditorialPage(Page):
+    template = "pages/editorial_page.html"
     """Editorial Page"""
     
     press_date = models.DateField(help_text="Date of editorial")
@@ -987,3 +990,230 @@ class ArticlePage(Page):
         verbose_name = "Article"
         verbose_name_plural = "Articles"
         ordering = ['-publish_date']
+
+
+class PressGalleryIndexPage(Page):
+    template = "pages/press_gallery_index_page.html"
+    """
+    Press Gallery Index Page
+    For editorial photos, election rallies, government events, etc.
+    """
+    
+    page_title = models.CharField(
+        max_length=100,
+        default="Press Gallery",
+        help_text="Main page heading"
+    )
+    
+    introduction = RichTextField(
+        blank=True,
+        help_text="Introduction text (optional)"
+    )
+    
+    content_panels = Page.content_panels + [
+        FieldPanel('page_title'),
+        FieldPanel('introduction'),
+    ]
+    
+    subpage_types = ['pages.PressGalleryCategoryPage']
+    
+    class Meta:
+        verbose_name = "Press Gallery Index Page"
+    
+    def get_context(self, request):
+        context = super().get_context(request)
+        
+        # Get all categories
+        categories = PressGalleryCategoryPage.objects.live().child_of(self).order_by('title')
+        context['categories'] = categories
+        
+        return context
+
+
+class PressGalleryCategoryPage(Page):
+    template = "pages/press_gallery_category_page.html"
+    """
+    Press Gallery Category (Editorials, Election Rally, Government Events, etc.)
+    """
+    
+    category_name = models.CharField(
+        max_length=100,
+        help_text="Category name (e.g., Editorials, Election Rally)"
+    )
+    
+    category_description = RichTextField(
+        blank=True,
+        help_text="Category description (optional)"
+    )
+    
+    content_panels = Page.content_panels + [
+        FieldPanel('category_name'),
+        FieldPanel('category_description'),
+    ]
+    
+    parent_page_types = ['pages.PressGalleryIndexPage']
+    subpage_types = ['pages.PressAlbumPage']
+    
+    class Meta:
+        verbose_name = "Press Gallery Category"
+        verbose_name_plural = "Press Gallery Categories"
+    
+    def get_context(self, request):
+        context = super().get_context(request)
+        
+        # Get all albums in this category
+        albums = PressAlbumPage.objects.live().child_of(self).order_by('-album_date')
+        
+        # Search functionality
+        search_query = request.GET.get('search', '')
+        if search_query:
+            albums = albums.search(search_query)
+        
+        # Date range filtering
+        date_from = request.GET.get('date_from', '')
+        date_to = request.GET.get('date_to', '')
+        
+        if date_from:
+            try:
+                from datetime import datetime
+                from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+                albums = albums.filter(album_date__gte=from_date)
+            except ValueError:
+                pass
+        
+        if date_to:
+            try:
+                from datetime import datetime
+                to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+                albums = albums.filter(album_date__lte=to_date)
+            except ValueError:
+                pass
+        
+        # Pagination
+        page = request.GET.get('page', 1)
+        paginator = Paginator(albums, 12)
+        
+        try:
+            albums = paginator.page(page)
+        except PageNotAnInteger:
+            albums = paginator.page(1)
+        except EmptyPage:
+            albums = paginator.page(paginator.num_pages)
+        
+        context['albums'] = albums
+        context['search_query'] = search_query
+        context['date_from'] = date_from
+        context['date_to'] = date_to
+        
+        return context
+    
+    def get_album_count(self):
+        """Get total number of albums in category"""
+        return PressAlbumPage.objects.live().child_of(self).count()
+
+
+class PressAlbumPage(Page):
+    template = "pages/press_album_page.html"
+    
+    """
+    Individual Press Album/Event
+    """
+    
+    album_title = models.CharField(
+        max_length=255,
+        help_text="Album title"
+    )
+    
+    album_date = models.DateField(
+        help_text="Album date"
+    )
+    
+    album_location = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Event location (e.g., Indira Bhawan | New Delhi)"
+    )
+    
+    album_description = RichTextField(
+        blank=True,
+        help_text="Album description (optional)"
+    )
+    
+    cover_image = models.ForeignKey(
+        'wagtailimages.Image',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='+',
+        help_text="Album cover image"
+    )
+    
+    search_fields = Page.search_fields + [
+        index.SearchField('album_title'),
+        index.SearchField('album_location'),
+        index.SearchField('album_description'),
+    ]
+    
+    content_panels = Page.content_panels + [
+        FieldPanel('album_title'),
+        FieldPanel('album_date'),
+        FieldPanel('album_location'),
+        FieldPanel('cover_image'),
+        FieldPanel('album_description'),
+        InlinePanel('press_images', label="Photos", min_num=1),
+    ]
+    
+    parent_page_types = ['pages.PressGalleryCategoryPage']
+    
+    class Meta:
+        verbose_name = "Press Album"
+        verbose_name_plural = "Press Albums"
+        ordering = ['-album_date']
+    
+    def get_cover_image(self):
+        """Get cover image or first photo"""
+        if self.cover_image:
+            return self.cover_image
+        
+        first_image = self.press_images.first()
+        if first_image:
+            return first_image.image
+        
+        return None
+    
+    def get_photo_count(self):
+        """Get total number of photos"""
+        return self.press_images.count()
+
+
+class PressImage(Orderable):
+    """
+    Individual photo in press album
+    """
+    
+    page = ParentalKey(
+        PressAlbumPage,
+        on_delete=models.CASCADE,
+        related_name='press_images'
+    )
+    
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        on_delete=models.CASCADE,
+        related_name='+'
+    )
+    
+    caption = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Photo caption (optional)"
+    )
+    
+    panels = [
+        FieldPanel('image'),
+        FieldPanel('caption'),
+    ]
+    
+    class Meta:
+        verbose_name = "Press Image"
+        verbose_name_plural = "Press Images"

@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.album_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mt-3 mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ page.get_parent.get_parent.url }}">Press Gallery</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ page.get_parent.url }}">{{ page.get_parent.category_name }}</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        {{ page.album_title|truncatewords:5 }}
+                    </li>
+                </ol>
+            </nav>
+            
+            <!-- Album Header -->
+            <div class="press-album-detail-header">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-8">
+                        <div class="press-album-date-badge mb-2">
+                            <i class="far fa-calendar-alt me-2"></i>
+                            {{ page.album_date|date:"d F Y" }}
+                        </div>
+                        <h1 class="press-album-detail-title">{{ page.album_title }}</h1>
+                        {% if page.album_location %}
+                            <p class="press-album-detail-location">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                {{ page.album_location }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button class="btn btn-outline-success" 
+                                onclick="copyPageLink('{{ request.scheme }}://{{ request.get_host }}{% pageurl page %}')">
+                            <i class="fas fa-share-alt me-2"></i>
+                            Share Album
+                        </button>
+                    </div>
+                </div>
+                
+                {% if page.album_description %}
+                    <div class="press-album-description mb-4">
+                        {{ page.album_description|richtext }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Photos Grid -->
+            <div class="press-photos-grid">
+                <div class="row g-3">
+                    {% for press_image in page.press_images.all %}
+                        <div class="col-lg-4 col-md-6">
+                            <div class="press-photo-item" data-bs-toggle="modal" 
+                                 data-bs-target="#photoModal" 
+                                 data-photo-index="{{ forloop.counter0 }}">
+                                {% image press_image.image fill-600x400 as photo_thumb %}
+                                <img src="{{ photo_thumb.url }}" 
+                                     alt="{{ press_image.caption|default:page.album_title }}" 
+                                     class="press-photo-thumb">
+                                
+                                {% if press_image.caption %}
+                                    <div class="press-photo-caption-overlay">
+                                        <p class="press-photo-caption-text">{{ press_image.caption }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Back Button -->
+            <div class="press-album-back mt-5 mb-4">
+                <a href="{{ page.get_parent.url }}" class="btn btn-outline-success">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to {{ page.get_parent.category_name }}
+                </a>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Photo Modal (Lightbox) -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="photoCarousel" class="carousel slide" data-bs-ride="false">
+                    <div class="carousel-inner">
+                        {% for press_image in page.press_images.all %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                {% image press_image.image fill-1600x1200 as photo_full %}
+                                <img src="{{ photo_full.url }}" 
+                                     class="d-block w-100" 
+                                     alt="{{ press_image.caption|default:page.album_title }}">
+                                
+                                {% if press_image.caption %}
+                                    <div class="carousel-caption">
+                                        <p>{{ press_image.caption }}</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {% if page.get_photo_count > 1 %}
+                        <button class="carousel-control-prev" type="button" data-bs-target="#photoCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#photoCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="linkCopiedToast" class="toast" role="alert">
+        <div class="toast-body bg-success text-white">
+            <i class="fas fa-check-circle me-2"></i>
+            Link copied to clipboard!
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Modal photo navigation
+document.querySelectorAll('[data-bs-toggle="modal"]').forEach(function(element) {
+    element.addEventListener('click', function() {
+        const photoIndex = parseInt(this.getAttribute('data-photo-index'));
+        const carousel = new bootstrap.Carousel(document.getElementById('photoCarousel'));
+        carousel.to(photoIndex);
+    });
+});
+
+// Copy link
+function copyPageLink(url) {
+    navigator.clipboard.writeText(url).then(function() {
+        const toastEl = document.getElementById('linkCopiedToast');
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    });
+}
+</script>
+{% endblock %}

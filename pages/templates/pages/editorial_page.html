@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.short_title }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mt-3 mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ page.get_parent.url }}">Press</a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        Editorial
+                    </li>
+                </ol>
+            </nav>
+            
+            <!-- Editorial Content -->
+            <article class="press-detail-article">
+                
+                <!-- Editorial Badge -->
+                <div class="press-detail-badge mb-3">
+                    <span class="press-badge-tag">EDITORIAL</span>
+                </div>
+                
+                <!-- Editorial Date & Author -->
+                <div class="press-detail-meta mb-3">
+                    <span class="press-detail-date">
+                        <i class="far fa-calendar-alt me-2"></i>
+                        {{ page.press_date|date:"d F Y" }}
+                    </span>
+                    
+                    {% if page.author_names %}
+                        <span class="press-detail-author ms-3">
+                            <i class="far fa-user me-2"></i>
+                            {{ page.author_names }}
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Editorial Title -->
+                <h1 class="press-detail-title mb-4">{{ page.short_title }}</h1>
+                
+                <!-- Editorial Content -->
+                <div class="press-detail-content">
+                    {{ page.content|richtext }}
+                </div>
+                
+                <!-- Back Button -->
+                <div class="press-detail-back mt-5">
+                    <a href="{{ page.get_parent.url }}" class="btn btn-outline-success">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Back to Press
+                    </a>
+                </div>
+                
+            </article>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
